@@ -10,4 +10,6 @@ const loadMoreBtn = document.querySelector('.load-more');
 
 searchForm.addEventListener('submit', onSubmit);
 
-function onSubmit() {}
+function onSubmit() {
+  console.log(searchForm);
+}
