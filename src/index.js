@@ -1,5 +1,5 @@
 import './css/style.css';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { instance } from '../service/api';
@@ -9,7 +9,7 @@ const inputText = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 
-let page = 1;
+let page = 0;
 
 loadMoreBtn.style.display = 'none';
 searchForm.addEventListener('submit', onSubmit);
@@ -37,7 +37,9 @@ async function onSubmit(e) {
 
 async function onLoadMore() {
   const name = inputText.value.trim();
+
   page += 1;
+
   const data = await instance(name, page);
   createItems(data, true);
 }
@@ -104,3 +106,23 @@ export function Notification(length, totalHits) {
     Notify.info("We're sorry, but you've reached the end of search results.");
   }
 }
+
+// function checkPosition() {
+//   const height = document.body.offsetHeight;
+//   const screenHeight = window.innerHeight;
+
+//   const scrolled = window.scrollY;
+
+//   const threshold = height - screenHeight / 4;
+
+//   const position = scrolled + screenHeight;
+
+//   if (position >= threshold) {
+//     onLoadMore();
+//   }
+// }
+
+// (() => {
+//   window.addEventListener('scroll', checkPosition);
+//   window.addEventListener('resize', checkPosition);
+// })();

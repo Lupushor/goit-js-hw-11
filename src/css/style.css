@@ -13,7 +13,7 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(228, 255, 184);
+  background-color: rgb(228, 230, 225);
   color: #212121;
   line-height: 1.5;
 
@@ -54,7 +54,7 @@ input {
 
 input:focus,
 input:hover {
-  border: 3px solid crimson;
+  border: 3px solid green;
 }
 
 .submit-btn {
@@ -78,7 +78,7 @@ input:hover {
 
 .submit-btn:hover,
 .submit-btn:focus {
-  background-color: rgb(250, 116, 67);
+  background-color: rgb(67, 192, 250);
 }
 
 .gallery {
@@ -90,7 +90,7 @@ input:hover {
 }
 
 .photo-card {
-  width: 315px;
+  width: 250px;
 
   display: inline-block;
 
@@ -99,12 +99,12 @@ input:hover {
   border: 1px solid black;
   border-radius: 5px;
 
-  background-color: aquamarine;
+  background-color: rgb(218, 223, 208);
 }
 
 .photo {
-  min-width: 300px;
-  height: 250px;
+  min-width: 245px;
+  height: 200px;
 }
 
 .info {
@@ -144,7 +144,7 @@ input:hover {
   text-align: center;
   letter-spacing: 0.06em;
 
-  background-color: coral;
+  background-color: rgb(138, 228, 228);
 
   cursor: pointer;
 
@@ -154,5 +154,5 @@ input:hover {
 
 .load-more:hover,
 .load-more:focus {
-  background-color: rgb(250, 116, 67);
+  background-color: rgb(117, 186, 252);
 }
