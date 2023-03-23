@@ -149,6 +149,15 @@ function checkPosition() {
 
   const position = scrolled + screenHeight;
 
+  // switch ((position, threshold)) {
+  //   case position >= threshold:
+  //     onLoadMore();
+  //     break;
+
+  //   default:
+  //     break;
+  // }
+
   if (position >= threshold) {
     onLoadMore();
   }
