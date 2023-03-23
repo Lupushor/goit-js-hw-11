@@ -1,88 +1,114 @@
 import './css/style.css';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import axios from 'axios';
+// import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { instance } from '../service/api';
+// import { instance } from '../service/api';
 
-const searchForm = document.querySelector('#search-form');
-const inputText = document.querySelector('input[name="searchQuery"]');
-const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
+const refs = {
+  searchForm: document.querySelector('.search-form'),
+  inputText: document.querySelector('input[name="searchQuery"]'),
+  gallery: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'),
+};
 
-let page = 0;
+let page = 1;
 
-loadMoreBtn.style.display = 'none';
-searchForm.addEventListener('submit', onSubmit);
-loadMoreBtn.addEventListener('click', onLoadMore);
+refs.loadMoreBtn.style.display = 'none';
+refs.searchForm.addEventListener('submit', onSubmit);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-async function onSubmit(e) {
+function onSubmit(e) {
   e.preventDefault();
 
   page = 1;
 
-  gallery.innerHTML = '';
+  refs.gallery.innerHTML = '';
 
-  const name = inputText.value.trim();
+  const name = refs.inputText.value.trim();
 
   if (name !== '') {
-    const data = await instance(name);
-    createItems(data);
+    instance(name);
+    // createItems(data);
   } else {
-    loadMoreBtn.style.display = 'none';
-    return Notify.failure(
+    refs.loadMoreBtn.style.display = 'none';
+    return Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 }
 
-async function onLoadMore() {
-  const name = inputText.value.trim();
+// async
+function onLoadMore() {
+  const name = refs.inputText.value.trim();
 
   page += 1;
 
-  const data = await instance(name, page);
-  createItems(data, true);
+  instance(name, page);
+
+  // const data = await instance(name, page);
+  // createItems(data, true);
 }
 
-export function createItems(photos, append = false) {
+async function instance(name, page) {
+  const BASE_URL = 'https://pixabay.com/api/';
+
+  const options = {
+    params: {
+      key: '34500293-b03de9e828113a4f3f2acb0b8',
+      q: name,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: 'true',
+      page: page,
+      per_page: 40,
+    },
+  };
+  try {
+    const response = await axios.get(BASE_URL, options);
+    notification(response.data.hits.length, response.data.total);
+
+    createItems(response.data);
+  } catch (error) {
+    refs.loadMoreBtn.style.display = 'none';
+    Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+    // console.log(error);
+    // console.log(error.message);
+  }
+}
+
+function createItems(photos) {
   const markup = photos.hits
     .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `<a class ="photo-link" href="${largeImageURL}">
+      item => `<a class ="photo-link" href="${item.largeImageURL}">
     <div class="photo-card">
         <div class="photo">
-     <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
+     <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy"/>
         </div>
      <div class="info">
        <p class="info-item">
-         <b>Likes: ${likes}</b>
+         <b>Likes: ${item.likes}</b>
        </p>
        <p class="info-item">
-         <b>Views: ${views}</b>
+         <b>Views: ${item.views}</b>
        </p>
        <p class="info-item">
-         <b>Comments: ${comments}</b>
+         <b>Comments: ${item.comments}</b>
        </p>
        <p class="info-item">
-         <b>Downloads: ${downloads}</b>
+         <b>Downloads: ${item.downloads}</b>
        </p>
      </div>
      </div>
    </a>`
     )
     .join('');
-  if (append) {
-    gallery.insertAdjacentHTML('beforeend', markup);
-  } else {
-    gallery.innerHTML = markup;
-  }
+
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+
   simpleLightbox.refresh();
 }
 
@@ -91,38 +117,44 @@ const simpleLightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-export function Notification(length, totalHits) {
+function notification(length, totalHits) {
   if (length === 0) {
-    Notify.failure(
+    Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
     return;
-  } else if (page === 1) {
-    loadMoreBtn.style.display = 'flex';
+  }
 
-    Notify.success(`Hooray! We found ${totalHits} images.`);
-  } else if (page >= Math.ceil(totalHits / 40)) {
-    loadMoreBtn.style.display = 'none';
-    Notify.info("We're sorry, but you've reached the end of search results.");
+  if (page === 1) {
+    refs.loadMoreBtn.style.display = 'flex';
+
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+  }
+
+  if (page >= Math.ceil(totalHits / 40)) {
+    refs.loadMoreBtn.style.display = 'none';
+    Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
   }
 }
 
-// function checkPosition() {
-//   const height = document.body.offsetHeight;
-//   const screenHeight = window.innerHeight;
+function checkPosition() {
+  const height = document.body.offsetHeight;
+  const screenHeight = window.innerHeight;
 
-//   const scrolled = window.scrollY;
+  const scrolled = window.scrollY;
 
-//   const threshold = height - screenHeight / 4;
+  const threshold = height - screenHeight / 4;
 
-//   const position = scrolled + screenHeight;
+  const position = scrolled + screenHeight;
 
-//   if (position >= threshold) {
-//     onLoadMore();
-//   }
-// }
+  if (position >= threshold) {
+    onLoadMore();
+  }
+}
 
-// (() => {
-//   window.addEventListener('scroll', checkPosition);
-//   window.addEventListener('resize', checkPosition);
-// })();
+(() => {
+  window.addEventListener('scroll', checkPosition);
+  window.addEventListener('resize', checkPosition);
+})();
