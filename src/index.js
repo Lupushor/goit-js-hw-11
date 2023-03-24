@@ -67,7 +67,7 @@ async function instance(name, page) {
   };
   try {
     const response = await axios.get(BASE_URL, options);
-    notification(response.data.hits.length, response.data.total);
+    notification(response.data.hits.length, response.data.totalHits);
 
     createItems(response.data);
   } catch (error) {
@@ -75,8 +75,6 @@ async function instance(name, page) {
     Notiflix.Notify.info(
       "We're sorry, but you've reached the end of search results."
     );
-    // console.log(error);
-    // console.log(error.message);
   }
 }
 
@@ -139,31 +137,22 @@ function notification(length, totalHits) {
   }
 }
 
-function checkPosition() {
-  const height = document.body.offsetHeight;
-  const screenHeight = window.innerHeight;
+// function checkPosition() {
+//   const height = document.body.offsetHeight;
+//   const screenHeight = window.innerHeight;
 
-  const scrolled = window.scrollY;
+//   const scrolled = window.scrollY;
 
-  const threshold = height - screenHeight / 4;
+//   const threshold = height - screenHeight / 4;
 
-  const position = scrolled + screenHeight;
+//   const position = scrolled + screenHeight;
 
-  // switch ((position, threshold)) {
-  //   case position >= threshold:
-  //     onLoadMore();
-  //     break;
+//   if (position >= threshold) {
+//     onLoadMore();
+//   }
+// }
 
-  //   default:
-  //     break;
-  // }
-
-  if (position >= threshold) {
-    onLoadMore();
-  }
-}
-
-(() => {
-  window.addEventListener('scroll', checkPosition);
-  window.addEventListener('resize', checkPosition);
-})();
+// (() => {
+//   window.addEventListener('scroll', checkPosition);
+//   window.addEventListener('resize', checkPosition);
+// })();
